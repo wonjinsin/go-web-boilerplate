@@ -1,0 +1,14 @@
+projectName: pikachu
+env: local
+
+database:
+  dialect: mysql
+  host: 127.0.0.1
+  port: 53306 
+  dbname: pikachu
+  username: root
+  password: mysqlvotmdnjem
+
+redis:
+  host: 127.0.0.1
+  port: 56379
