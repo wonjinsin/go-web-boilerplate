@@ -25,16 +25,21 @@ fmt:
 	go fmt
 
 .PHONY: lint
-lint:
+lint: build-lint
 	$Q $(GOLINT) $(PKG_LIST)
+
+build-lint:
+	go list ./... > pkg.list
+	GOBIN=$(BIN) go get golang.org/x/lint/golint
 
 .PHONY: test
 test:
 	go test -v -cover ./...
 
-build-lint:
-	go list ./... > pkg.list
-	GOBIN=$(BIN) go get golang.org/x/lint/golint
+test-all: vet fmt lint
+
+build-gomod:
+	[ -f ./go.mod ] || go mod init $(PACKAGE)
 
 build-mocks:
 	GOBIN=$(BIN) go get github.com/golang/mock/mockgen
@@ -42,6 +47,7 @@ build-mocks:
 	$(MOCK) -source=repository/repository.go -destination=mock/mock_repository.go -package=mock
 
 .PHONY: vendor
-vendor: build-mocks
+vendor: build-gomod \
+	build-mocks
 	go mod vendor
 
