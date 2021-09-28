@@ -31,6 +31,7 @@ lint: build-lint
 build-lint:
 	go list ./... > pkg.list
 	GOBIN=$(BIN) go get golang.org/x/lint/golint
+	go mod vendor
 
 .PHONY: test
 test:
@@ -51,3 +52,11 @@ vendor: build-gomod \
 	build-mocks
 	go mod vendor
 
+start:
+	@$(BIN)/$(PACKAGE)
+
+all: vendor build
+
+clear:; $(info cleaning…) @ 
+	@rm -rf vendor mock bin
+	@rm go.mod go.sum pkg.list

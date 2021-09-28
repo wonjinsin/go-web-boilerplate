@@ -8,7 +8,6 @@ Simple rest api server with [Echo framework](https://github.com/labstack/echo)
 [![Go Report Card](https://goreportcard.com/badge/github.com/StarpTech/go-web)](https://goreportcard.com/report/github.com/wonjinsin/go-web-boilerplate)
 
 ## Features
------------
 - [Gorm](https://github.com/go-gorm/gorm) : For mysql ORM
 - [Go-redis](https://github.com/go-redis/redis/v8) : Go redis client
 - [Zap](https://github.com/uber-go/zap) : Go leveled Logging
@@ -17,22 +16,33 @@ Simple rest api server with [Echo framework](https://github.com/labstack/echo)
 - [Makefile]() : go build, test, vendor using Make
 
 ## Project structure
---------------------
 DDD(Domain Driven Design) pattern with controller, model, servie, repository
 
 ## Getting started
-------------------
-### Build vendor
+
+### Initial action
+```
+$ make all && make build && make start
+```
+
+### Build vendors
 ```
 $ make vendor
 ```
-### Build
+
+### Build and start
 ```
 $ make build && bin/pikachu
 ```
-### test
+
+### Test
 ```
 $ make vet && make lint && make test
 // or
-$ make all
+$ make test-all
+```
+
+### Clean
+```
+$ make clean
 ```
