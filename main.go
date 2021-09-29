@@ -5,14 +5,15 @@ import (
 	"log"
 	"os"
 	"pikachu/config"
-	"pikachu/middleware"
+	mw "pikachu/middleware"
 	"pikachu/repository"
 	"pikachu/router"
 	"pikachu/service"
 	"pikachu/util"
 
 	"github.com/dimiro1/banner"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
+	// "github.com/rbcervilla/redisstore/v8"
 )
 
 var zlog *util.Logger
@@ -32,9 +33,16 @@ func init() {
 func main() {
 	pikachu := config.Pikachu
 	e := echo.New()
-	e.Use(middleware.SetTRID())
-	e.Use(middleware.RequestLogger(zlog))
+	e.Use(mw.SetTRID())
+	e.Use(mw.RequestLogger(zlog))
 	e.HideBanner = true
+
+	sessionMiddleWare, err := mw.SetSession(pikachu, zlog)
+	if err != nil {
+		fmt.Printf("Error when Start sessionMiddleware: %v\n", err)
+		os.Exit(1)
+	}
+	e.Use(sessionMiddleWare)
 
 	repo, redis, err := repository.Init(pikachu)
 	if err != nil {

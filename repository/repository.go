@@ -11,7 +11,6 @@ import (
 	"pikachu/model"
 	"pikachu/util"
 
-	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -77,13 +76,12 @@ func Init(pikachu *config.ViperConfig) (*Repository, *RedisRepository, error) {
 	}
 
 	redisPrefix = pikachu.GetString("projectName")
-	redisConn, err := redisConnect(pikachu)
+	redisConn, err := util.RedisConnect(pikachu, zlog)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	userRepo := NewGormUserRepository(mysqlConn)
-
 	redisUserRepo := NewRedisUserRepository(redisConn, userRepo)
 
 	return &Repository{User: userRepo}, &RedisRepository{User: redisUserRepo}, nil
@@ -117,20 +115,6 @@ func getConfig(pikachu *config.ViperConfig) (gConfig *gorm.Config) {
 	}
 
 	return gConfig
-}
-
-// redisConnect ...
-func redisConnect(pikachu *config.ViperConfig) (redisDB *redis.Client, err error) {
-	host := fmt.Sprintf("%s:%d", pikachu.GetString("redis.host"), pikachu.GetInt("redis.port"))
-	zlog.Infow("InitRedis", "redis_host", host)
-	redisDB = redis.NewClient(&redis.Options{
-		Addr:     host,
-		Password: "",
-	})
-	if _, err := redisDB.Ping(context.Background()).Result(); err != nil {
-		return nil, err
-	}
-	return redisDB, nil
 }
 
 // UserRepository ...
