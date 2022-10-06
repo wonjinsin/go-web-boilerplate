@@ -60,17 +60,23 @@ func init() {
 
 // Repository ...
 type Repository struct {
-	User UserRepository
+	User         UserRepository
+	UserReadOnly UserReadOnlyRepository
 }
 
 // RedisRepository ...
 type RedisRepository struct {
-	User UserRepository
+	UserReadOnly UserReadOnlyRepository
 }
 
 // Init ...
 func Init(pikachu *config.ViperConfig) (*Repository, *RedisRepository, error) {
-	mysqlConn, err := mysqlConnect(pikachu)
+	mysqlConn, err := mysqlConnect(pikachu, "database")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	mysqlReadOnlyConn, err := mysqlConnect(pikachu, "readOnlyDatabase")
 	if err != nil {
 		return nil, nil, err
 	}
@@ -81,25 +87,36 @@ func Init(pikachu *config.ViperConfig) (*Repository, *RedisRepository, error) {
 		return nil, nil, err
 	}
 
-	userRepo := NewGormUserRepository(mysqlConn)
-	redisUserRepo := NewRedisUserRepository(redisConn, userRepo)
+	db := &model.DB{
+		MainDB: mysqlConn,
+		ReadDB: mysqlReadOnlyConn,
+		Redis:  redisConn,
+	}
 
-	return &Repository{User: userRepo}, &RedisRepository{User: redisUserRepo}, nil
+	userRepo := NewGormUserRepository(db.MainDB)
+	userReadOnlyRepo := NewGormUserReadOnlyRepository(db.ReadDB)
+
+	redisUserRepo := NewRedisUserRepository(db.Redis, userRepo)
+
+	return &Repository{
+			User:         userRepo,
+			UserReadOnly: userReadOnlyRepo,
+		}, &RedisRepository{
+			UserReadOnly: redisUserRepo,
+		}, nil
 }
 
-func mysqlConnect(pikachu *config.ViperConfig) (mysql *gorm.DB, err error) {
-	mysql, err = gorm.Open(getDialector(pikachu), &gorm.Config{})
-
-	return mysql, err
+func mysqlConnect(pikachu *config.ViperConfig, prefix string) (mysql *gorm.DB, err error) {
+	return gorm.Open(getDialector(pikachu, prefix), &gorm.Config{})
 }
 
-func getDialector(pikachu *config.ViperConfig) gorm.Dialector {
+func getDialector(pikachu *config.ViperConfig, prefix string) gorm.Dialector {
 	dbURI := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?&charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=True&loc=UTC",
-		pikachu.GetString("database.username"),
-		pikachu.GetString("database.password"),
-		pikachu.GetString("database.host"),
-		pikachu.GetInt("database.port"),
-		pikachu.GetString("database.dbname"),
+		pikachu.GetString(fmt.Sprintf("%s.username", prefix)),
+		pikachu.GetString(fmt.Sprintf("%s.password", prefix)),
+		pikachu.GetString(fmt.Sprintf("%s.host", prefix)),
+		pikachu.GetInt(fmt.Sprintf("%s.port", prefix)),
+		pikachu.GetString(fmt.Sprintf("%s.dbname", prefix)),
 	)
 
 	return mysql.Open(dbURI)
@@ -124,4 +141,10 @@ type UserRepository interface {
 	GetUserByEmail(ctx context.Context, email string) (ruser *model.User, err error)
 	UpdateUser(ctx context.Context, user *model.User) (ruser *model.User, err error)
 	DeleteUser(ctx context.Context, uid string) (err error)
+}
+
+// UserReadOnlyRepository ...
+type UserReadOnlyRepository interface {
+	GetUser(ctx context.Context, uid string) (ruser *model.User, err error)
+	GetUserByEmail(ctx context.Context, email string) (ruser *model.User, err error)
 }

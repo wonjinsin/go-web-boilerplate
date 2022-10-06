@@ -15,3 +15,11 @@ func init() {
 		os.Exit(1)
 	}
 }
+
+// // BaseModel ...
+// type BaseModel struct {
+// 	ID        uint64                `gorm:"primaryKey" json:"id"`
+// 	CreatedAt time.Time             `json:"createdAt" gorm:"<-:create;autoCreateTime;not null"`
+// 	UpdatedAt time.Time             `json:"updatedAt" gorm:"autoUpdateTime;not null"`
+// 	DeletedAt soft_delete.DeletedAt `json:"deletedAt" gorm:"default:0"`
+// }

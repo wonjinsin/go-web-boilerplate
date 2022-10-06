@@ -10,21 +10,16 @@ import (
 )
 
 type redisUserRepository struct {
-	client   *redis.Client
-	userRepo UserRepository
+	client           *redis.Client
+	userReadOnlyRepo UserReadOnlyRepository
 }
 
 // NewRedisUserRepository ...
-func NewRedisUserRepository(client *redis.Client, userRepo UserRepository) UserRepository {
+func NewRedisUserRepository(client *redis.Client, userReadOnlyRepo UserReadOnlyRepository) UserReadOnlyRepository {
 	return &redisUserRepository{
-		client:   client,
-		userRepo: userRepo,
+		client:           client,
+		userReadOnlyRepo: userReadOnlyRepo,
 	}
-}
-
-// NewUser ...
-func (r *redisUserRepository) NewUser(ctx context.Context, user *model.User) (ruser *model.User, err error) {
-	return r.userRepo.NewUser(ctx, user)
 }
 
 // GetUser ...
@@ -33,7 +28,7 @@ func (r *redisUserRepository) GetUser(ctx context.Context, uid string) (ruser *m
 	userJSON, err := r.client.Get(ctx, fmt.Sprintf("%s:users:%s", redisPrefix, uid)).Bytes()
 	if err == redis.Nil {
 		zlog.With(ctx).Infow("GetUser Not Found", "uid", uid)
-		if ruser, err = r.userRepo.GetUser(ctx, uid); err == nil {
+		if ruser, err = r.userReadOnlyRepo.GetUser(ctx, uid); err == nil {
 			r.newUserToRedis(ctx, ruser)
 		}
 		return ruser, err
@@ -50,17 +45,7 @@ func (r *redisUserRepository) GetUser(ctx context.Context, uid string) (ruser *m
 
 // GetUserByEmail ...
 func (r *redisUserRepository) GetUserByEmail(ctx context.Context, email string) (ruser *model.User, err error) {
-	return r.userRepo.GetUserByEmail(ctx, email)
-}
-
-// UpdateUser ...
-func (r *redisUserRepository) UpdateUser(ctx context.Context, user *model.User) (ruser *model.User, err error) {
-	return r.userRepo.UpdateUser(ctx, user)
-}
-
-// DeleteUser ...
-func (r *redisUserRepository) DeleteUser(ctx context.Context, uid string) (err error) {
-	return r.userRepo.DeleteUser(ctx, uid)
+	return r.userReadOnlyRepo.GetUserByEmail(ctx, email)
 }
 
 func (r *redisUserRepository) newUserToRedis(ctx context.Context, user *model.User) (err error) {
@@ -71,7 +56,7 @@ func (r *redisUserRepository) newUserToRedis(ctx context.Context, user *model.Us
 		return err
 	}
 
-	if err = r.client.Set(ctx, fmt.Sprintf("pikachu:users:%s", user.UID), userJSON, 0).Err(); err != nil {
+	if err = r.client.Set(ctx, fmt.Sprintf("%s:users:%s", redisPrefix, user.UID), userJSON, 0).Err(); err != nil {
 		zlog.With(ctx).Errorw("newUserToRedis Error", "err", err)
 	}
 	return err

@@ -1,7 +1,5 @@
 package model
 
-import "fmt"
-
 // User ...
 type User struct {
 	UID   string `json:"uid" gorm:"primaryKey"`
@@ -24,8 +22,6 @@ func (u *User) ValidateUpdateUser() bool {
 
 // UpdateUser ...
 func (u *User) UpdateUser(user *User) *User {
-	fmt.Println(u)
-
 	u.Email = user.Email
 	u.Nick = user.Nick
 	return u

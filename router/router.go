@@ -2,19 +2,24 @@ package router
 
 import (
 	ct "pikachu/controller"
-	"pikachu/repository"
 	"pikachu/service"
 
 	"github.com/labstack/echo/v4"
 )
 
 // Init ...
-func Init(e *echo.Echo, svc *service.Service, repo *repository.Repository) {
-	// Default Group
+func Init(e *echo.Echo, svc *service.Service) {
 	api := e.Group("/api")
 	ver := api.Group("/v1")
 
-	// User Controller
+	makeV1UserRoute(ver, svc)
+}
+
+func makeV1Route(ver *echo.Group, svc *service.Service) {
+	makeV1UserRoute(ver, svc)
+}
+
+func makeV1UserRoute(ver *echo.Group, svc *service.Service) {
 	user := ver.Group("/user")
 	userCt := ct.NewUserController(svc.User)
 	user.POST("", userCt.NewUser)

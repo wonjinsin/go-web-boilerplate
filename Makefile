@@ -47,16 +47,24 @@ build-mocks:
 	$(MOCK) -source=service/service.go -destination=mock/mock_service.go -package=mock
 	$(MOCK) -source=repository/repository.go -destination=mock/mock_repository.go -package=mock
 
+.PHONY: init
+init: 
+	go mod init pikachu
+
+.PHONY: tidy
+tidy: 
+	go mod tidy
+
 .PHONY: vendor
 vendor: build-gomod \
-	build-mocks
+    build-mocks
 	go mod vendor
 
 start:
 	@$(BIN)/$(PACKAGE)
 
-all: vendor build
+all: init tidy build-mocks vendor build
 
-clear:; $(info cleaning…) @ 
+clean:; $(info cleaning…) @ 
 	@rm -rf vendor mock bin
-	@rm go.mod go.sum pkg.list
+	@rm -rf go.mod go.sum pkg.list

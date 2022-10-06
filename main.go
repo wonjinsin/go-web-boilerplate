@@ -50,13 +50,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	svc, err := service.Init(redis)
+	svc, err := service.Init(repo, redis)
 	if err != nil {
 		fmt.Printf("Error when Start service: %v\n", err)
 		os.Exit(1)
 	}
 
-	router.Init(e, svc, repo)
+	router.Init(e, svc)
 
 	e.Logger.Fatal(e.Start(":33333"))
 }
