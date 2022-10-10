@@ -4,6 +4,9 @@ import (
 	"log"
 	"os"
 	"pikachu/util"
+	"time"
+
+	"gorm.io/plugin/soft_delete"
 )
 
 var zlog *util.Logger
@@ -16,10 +19,10 @@ func init() {
 	}
 }
 
-// // BaseModel ...
-// type BaseModel struct {
-// 	ID        uint64                `gorm:"primaryKey" json:"id"`
-// 	CreatedAt time.Time             `json:"createdAt" gorm:"<-:create;autoCreateTime;not null"`
-// 	UpdatedAt time.Time             `json:"updatedAt" gorm:"autoUpdateTime;not null"`
-// 	DeletedAt soft_delete.DeletedAt `json:"deletedAt" gorm:"default:0"`
-// }
+// BaseModel ...
+type BaseModel struct {
+	ID        uint64                `gorm:"primaryKey" json:"id"`
+	CreatedAt time.Time             `json:"createdAt" gorm:"<-:create;autoCreateTime;not null"`
+	UpdatedAt time.Time             `json:"updatedAt" gorm:"autoUpdateTime;not null"`
+	DeletedAt soft_delete.DeletedAt `json:"deletedAt" gorm:"default:0"`
+}

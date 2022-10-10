@@ -5,7 +5,8 @@ BIN = $(BASE_PATH)/bin
 BINARY_NAME = bin/$(PACKAGE)
 MAIN = $(BASE_PATH)/main.go
 GOLINT = $(BIN)/golint
-MOCK = $(BIN)/mockgen
+GOBIN = $(shell go env GOPATH)/bin
+MOCK = $(GOBIN)/mockgen
 PKG_LIST = $(shell cd $(BASE_PATH) && cat pkg.list)
 
 ifneq (, $(CUSTOM_OS))
@@ -43,7 +44,6 @@ build-gomod:
 	[ -f ./go.mod ] || go mod init $(PACKAGE)
 
 build-mocks:
-	GOBIN=$(BIN) go get github.com/golang/mock/mockgen
 	$(MOCK) -source=service/service.go -destination=mock/mock_service.go -package=mock
 	$(MOCK) -source=repository/repository.go -destination=mock/mock_repository.go -package=mock
 
@@ -63,7 +63,7 @@ vendor: build-gomod \
 start:
 	@$(BIN)/$(PACKAGE)
 
-all: init tidy build-mocks vendor build
+all: init tidy vendor build
 
 clean:; $(info cleaning…) @ 
 	@rm -rf vendor mock bin
