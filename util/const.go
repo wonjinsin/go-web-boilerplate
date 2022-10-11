@@ -25,6 +25,16 @@ const (
 	CtxTimeOut = time.Second * 10
 )
 
+// TokenTypes ...
+const (
+	TokenTypeBaerer string = "Baerer"
+)
+
+// TokenAudiences ...
+const (
+	TokenAudienceAccount string = "account"
+)
+
 // GetTRID ...
 func GetTRID() string {
 	t := time.Now()

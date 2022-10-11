@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"pikachu/config"
 	"pikachu/model"
 	"pikachu/repository"
 
@@ -10,12 +11,14 @@ import (
 )
 
 type userUsecase struct {
+	conf     *config.ViperConfig
 	userRepo repository.UserRepository
 }
 
 // NewUserService ...
-func NewUserService(userRepo repository.UserRepository) UserService {
+func NewUserService(conf *config.ViperConfig, userRepo repository.UserRepository) UserService {
 	return &userUsecase{
+		conf:     conf,
 		userRepo: userRepo,
 	}
 }
@@ -25,7 +28,12 @@ func (u *userUsecase) NewUser(ctx context.Context, user *model.User) (ruser *mod
 	zlog.With(ctx).Infow("[New Service Request]", "user", user)
 	if ruser, err = u.GetUserByEmail(ctx, user.Email); err == nil {
 		zlog.With(ctx).Errorw("UserRepo UserExist", "user", user)
-		return nil, errors.AlreadyExistsf("User already exists")
+		return nil, errors.AlreadyExistsf("User")
+	}
+
+	if err = user.UpdateHashPassword(); err != nil {
+		zlog.With(ctx).Errorw("UserRepo UserExist", "user", user)
+		return nil, errors.NotValidf("Password")
 	}
 
 	user.UID = uuid.New().String()

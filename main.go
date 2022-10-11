@@ -50,7 +50,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	svc, err := service.Init(repo, redis)
+	svc, err := service.Init(pikachu, repo, redis)
 	if err != nil {
 		fmt.Printf("Error when Start service: %v\n", err)
 		os.Exit(1)

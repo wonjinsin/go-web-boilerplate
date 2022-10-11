@@ -35,7 +35,8 @@ build-lint:
 	go mod vendor
 
 .PHONY: test
-test:
+test: build-gomod \
+    build-mocks
 	go test -v -cover ./...
 
 test-all: vet fmt lint

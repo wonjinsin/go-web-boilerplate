@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"pikachu/config"
 	"pikachu/mock"
 	"pikachu/model"
 
@@ -15,6 +16,7 @@ import (
 
 var _ = Describe("userService Test", func() {
 	var (
+		conf     *config.ViperConfig
 		mockCtrl *gomock.Controller
 		muRepo   *mock.MockUserRepository
 
@@ -26,7 +28,7 @@ var _ = Describe("userService Test", func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		muRepo = mock.NewMockUserRepository(mockCtrl)
 
-		userService = NewUserService(muRepo)
+		userService = NewUserService(conf, muRepo)
 		ctx = context.Background()
 	})
 
@@ -53,7 +55,7 @@ var _ = Describe("userService Test", func() {
 
 			mockedUser = &model.User{
 				Email: email,
-				Nick:  nick,
+				Nick:  &nick,
 			}
 
 			expectedUser = mockedUser
@@ -99,7 +101,7 @@ var _ = Describe("userService Test", func() {
 			expectedUser = &model.User{
 				UID:   uid,
 				Email: email,
-				Nick:  nick,
+				Nick:  &nick,
 			}
 			expectedError = nil
 		})
@@ -137,7 +139,7 @@ var _ = Describe("userService Test", func() {
 			expectedUser = &model.User{
 				UID:   uid,
 				Email: email,
-				Nick:  nick,
+				Nick:  &nick,
 			}
 			expectedError = nil
 		})
@@ -176,19 +178,19 @@ var _ = Describe("userService Test", func() {
 
 			mockedUser = &model.User{
 				Email: email,
-				Nick:  nick,
+				Nick:  &nick,
 			}
 
 			newUser = &model.User{
 				UID:   uid,
 				Email: email,
-				Nick:  nick,
+				Nick:  &nick,
 			}
 
 			expectedUser = &model.User{
 				UID:   uid,
 				Email: email,
-				Nick:  nick,
+				Nick:  &nick,
 			}
 			expectedError = nil
 		})

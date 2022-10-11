@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"pikachu/config"
 	"pikachu/repository"
 	"pikachu/util"
 
@@ -27,8 +28,8 @@ type Service struct {
 }
 
 // Init ...
-func Init(repo *repository.Repository, redis *repository.RedisRepository) (*Service, error) {
-	userSvc := NewUserService(repo.User)
+func Init(conf *config.ViperConfig, repo *repository.Repository, redis *repository.RedisRepository) (*Service, error) {
+	userSvc := NewUserService(conf, repo.User)
 	return &Service{User: userSvc}, nil
 }
 

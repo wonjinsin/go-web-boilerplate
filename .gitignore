@@ -24,6 +24,7 @@
 /mock/
 # End of https://www.toptal.com/developers/gitignore/api/go
 
+key
 bin
 go.mod
 go.sum

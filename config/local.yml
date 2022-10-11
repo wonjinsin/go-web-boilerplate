@@ -1,4 +1,5 @@
 projectName: pikachu
+domain: http://localhost:33333
 env: local
 
 database:
