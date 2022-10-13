@@ -43,3 +43,8 @@ func GetTRID() string {
 
 	return trid
 }
+
+// ContestKey ...
+const (
+	LoginKey = "login"
+)

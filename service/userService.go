@@ -31,18 +31,25 @@ func (u *userUsecase) NewUser(ctx context.Context, user *model.User) (ruser *mod
 		return nil, errors.AlreadyExistsf("User")
 	}
 
+	user.UID = uuid.New().String()
 	if err = user.UpdateHashPassword(); err != nil {
 		zlog.With(ctx).Errorw("UserRepo UserExist", "user", user)
 		return nil, errors.NotValidf("Password")
 	}
 
-	user.UID = uuid.New().String()
-	if ruser, err = u.userRepo.NewUser(ctx, user); err != nil {
-		zlog.With(ctx).Errorw("UserRepo NewUser Failed", "user", user)
-		return nil, err
+	return u.userRepo.NewUser(ctx, user)
+}
+
+// Login ...
+func (u *userUsecase) Login(ctx context.Context, auth *model.Auth) (ruser *model.User, err error) {
+	zlog.With(ctx).Infow("[New Service Request]", "auth", auth)
+	ruser, err = u.GetUserByEmail(ctx, auth.Email)
+	if err == nil {
+		zlog.With(ctx).Errorw("UserRepo UserExist", "user", ruser)
+		return nil, errors.AlreadyExistsf("User")
 	}
 
-	return ruser, nil
+	return ruser, err
 }
 
 // GetUser ...

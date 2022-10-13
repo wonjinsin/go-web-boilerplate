@@ -1,20 +1,23 @@
 package model
 
 import (
+	"pikachu/util"
+
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 // User ...
 type User struct {
-	UID      string  `json:"uid" gorm:"primaryKey"`
-	Email    string  `json:"email"`
-	Password string  `json:"-"`
-	Nick     *string `json:"nick,omitEmpty"`
+	UID      string   `json:"uid" gorm:"primaryKey"`
+	Email    string   `json:"email"`
+	Password Password `json:"password,omitempty"`
+	Nick     *string  `json:"nick,omitempty"`
 }
 
 // ValidateNewUser ...
 func (u *User) ValidateNewUser() bool {
-	return u.Email != "" && u.Password != "" && u.Nick != nil
+	return u.Email != "" && !u.Password.IsEmpty() && u.Nick != nil
 }
 
 // ValidateUpdateUser ...
@@ -31,14 +34,8 @@ func (u *User) UpdateHashPassword() error {
 	if err != nil {
 		return err
 	}
-	u.Password = string(bytes)
+	u.Password = Password(bytes)
 	return nil
-}
-
-// CheckPassword ...
-func (u *User) CheckPassword(hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(u.Password))
-	return err == nil
 }
 
 // UpdateUser ...
@@ -46,4 +43,14 @@ func (u *User) UpdateUser(user *User) *User {
 	u.Email = user.Email
 	u.Nick = user.Nick
 	return u
+}
+
+// AfterFind ...
+func (u *User) AfterFind(tx *gorm.DB) (err error) {
+	ctx := tx.Statement.Context
+	login, _ := ctx.Value(util.LoginKey).(bool)
+	if !login {
+		u.Password = ""
+	}
+	return
 }
