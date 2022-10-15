@@ -23,56 +23,6 @@ func NewUserController(userSvc service.UserService) UserController {
 	}
 }
 
-// NewUser ...
-func (u *User) NewUser(c echo.Context) (err error) {
-	ctx := c.Request().Context()
-	zlog.With(ctx).Infow("[New request]")
-	intCtx, cancel := context.WithTimeout(ctx, util.CtxTimeOut)
-	defer cancel()
-
-	user := &model.User{}
-	if err := c.Bind(user); err != nil {
-		zlog.With(intCtx).Warnw("Bind error", "user", user, "err", err)
-		return response(c, http.StatusBadRequest, err.Error())
-	} else if !user.ValidateNewUser() {
-		zlog.With(intCtx).Warnw("NewUser ValidateNewUser failed", "user", user)
-		return response(c, http.StatusBadRequest, "Validate failed")
-	}
-
-	if user, err = u.userSvc.NewUser(intCtx, user); err != nil {
-		zlog.With(intCtx).Errorw("UserSvc NewUser failed", "user", user, "err", err)
-		return response(c, http.StatusInternalServerError, err.Error())
-	}
-
-	return response(c, http.StatusOK, "New Deal OK", user)
-}
-
-// Login ...
-func (u *User) Login(c echo.Context) (err error) {
-	ctx := c.Request().Context()
-	zlog.With(ctx).Infow("[New request]")
-	intCtx, cancel := context.WithTimeout(ctx, util.CtxTimeOut)
-	ctx = context.WithValue(ctx, util.LoginKey, true)
-	defer cancel()
-
-	auth := &model.Auth{}
-	if err := c.Bind(auth); err != nil {
-		zlog.With(intCtx).Warnw("Bind error", "auth", auth, "err", err)
-		return response(c, http.StatusBadRequest, err.Error())
-	} else if !auth.Validate() {
-		zlog.With(intCtx).Warnw("Login Validate failed", "auth", auth)
-		return response(c, http.StatusBadRequest, "Validate failed")
-	}
-
-	user, err := u.userSvc.Login(intCtx, auth)
-	if err != nil {
-		zlog.With(intCtx).Errorw("UserSvc Login failed", "user", user, "err", err)
-		return response(c, http.StatusInternalServerError, err.Error())
-	}
-
-	return response(c, http.StatusOK, "Login OK", user)
-}
-
 // GetUser ...
 func (u *User) GetUser(c echo.Context) (err error) {
 	ctx := c.Request().Context()

@@ -67,7 +67,7 @@ func (g *gormUserRepository) GetUserByEmail(ctx context.Context, email string) (
 		return nil, err
 	}
 	if scope.RowsAffected == 0 {
-		zlog.With(ctx).Errorw("GetUserByEmail Not Found", "email", email, "err", err)
+		zlog.With(ctx).Warnw("GetUserByEmail Not Found", "email", email, "err", err)
 		return nil, errors.UserNotFoundf("User is not exist")
 	}
 

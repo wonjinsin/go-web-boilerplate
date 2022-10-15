@@ -49,8 +49,13 @@ func response(c echo.Context, code int, resultMsg string, result ...interface{})
 
 // UserController ...
 type UserController interface {
-	NewUser(c echo.Context) (err error)
 	GetUser(c echo.Context) (err error)
 	UpdateUser(c echo.Context) (err error)
 	DeleteUser(c echo.Context) (err error)
+}
+
+// AuthController ...
+type AuthController interface {
+	Signup(c echo.Context) (err error)
+	Signin(c echo.Context) (err error)
 }

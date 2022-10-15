@@ -3,6 +3,7 @@ package model
 import (
 	"pikachu/util"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -15,9 +16,19 @@ type User struct {
 	Nick     *string  `json:"nick,omitempty"`
 }
 
-// ValidateNewUser ...
-func (u *User) ValidateNewUser() bool {
-	return u.Email != "" && !u.Password.IsEmpty() && u.Nick != nil
+// NewUserBySignup ...
+func NewUserBySignup(su *Signup) (user *User, err error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(su.Password), 14)
+	if err != nil {
+		return nil, err
+	}
+
+	return &User{
+		UID:      uuid.New().String(),
+		Email:    su.Email,
+		Password: Password(bytes),
+		Nick:     su.Nick,
+	}, nil
 }
 
 // ValidateUpdateUser ...
@@ -26,16 +37,6 @@ func (u *User) ValidateUpdateUser() bool {
 		return false
 	}
 	return true
-}
-
-// UpdateHashPassword ...
-func (u *User) UpdateHashPassword() error {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(u.Password), 14)
-	if err != nil {
-		return err
-	}
-	u.Password = Password(bytes)
-	return nil
 }
 
 // UpdateUser ...

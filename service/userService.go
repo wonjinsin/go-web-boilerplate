@@ -2,54 +2,21 @@ package service
 
 import (
 	"context"
-	"pikachu/config"
 	"pikachu/model"
 	"pikachu/repository"
 
-	"github.com/google/uuid"
 	"github.com/juju/errors"
 )
 
 type userUsecase struct {
-	conf     *config.ViperConfig
 	userRepo repository.UserRepository
 }
 
 // NewUserService ...
-func NewUserService(conf *config.ViperConfig, userRepo repository.UserRepository) UserService {
+func NewUserService(userRepo repository.UserRepository) UserService {
 	return &userUsecase{
-		conf:     conf,
 		userRepo: userRepo,
 	}
-}
-
-// NewUser ...
-func (u *userUsecase) NewUser(ctx context.Context, user *model.User) (ruser *model.User, err error) {
-	zlog.With(ctx).Infow("[New Service Request]", "user", user)
-	if ruser, err = u.GetUserByEmail(ctx, user.Email); err == nil {
-		zlog.With(ctx).Errorw("UserRepo UserExist", "user", user)
-		return nil, errors.AlreadyExistsf("User")
-	}
-
-	user.UID = uuid.New().String()
-	if err = user.UpdateHashPassword(); err != nil {
-		zlog.With(ctx).Errorw("UserRepo UserExist", "user", user)
-		return nil, errors.NotValidf("Password")
-	}
-
-	return u.userRepo.NewUser(ctx, user)
-}
-
-// Login ...
-func (u *userUsecase) Login(ctx context.Context, auth *model.Auth) (ruser *model.User, err error) {
-	zlog.With(ctx).Infow("[New Service Request]", "auth", auth)
-	ruser, err = u.GetUserByEmail(ctx, auth.Email)
-	if err == nil {
-		zlog.With(ctx).Errorw("UserRepo UserExist", "user", ruser)
-		return nil, errors.AlreadyExistsf("User")
-	}
-
-	return ruser, err
 }
 
 // GetUser ...

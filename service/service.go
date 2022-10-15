@@ -25,20 +25,29 @@ func init() {
 // Service ...
 type Service struct {
 	User UserService
+	Auth AuthService
 }
 
 // Init ...
 func Init(conf *config.ViperConfig, repo *repository.Repository, redis *repository.RedisRepository) (*Service, error) {
-	userSvc := NewUserService(conf, repo.User)
-	return &Service{User: userSvc}, nil
+	userSvc := NewUserService(repo.User)
+	authSvc := NewAuthService(conf, repo.User)
+	return &Service{
+		User: userSvc,
+		Auth: authSvc,
+	}, nil
 }
 
 // UserService ...
 type UserService interface {
-	NewUser(ctx context.Context, user *model.User) (ruser *model.User, err error)
-	Login(ctx context.Context, auth *model.Auth) (ruser *model.User, err error)
 	GetUser(ctx context.Context, id string) (ruser *model.User, err error)
 	GetUserByEmail(ctx context.Context, email string) (ruser *model.User, err error)
 	UpdateUser(ctx context.Context, uid string, user *model.User) (ruser *model.User, err error)
 	DeleteUser(ctx context.Context, id string) (err error)
+}
+
+// AuthService ...
+type AuthService interface {
+	Signup(ctx context.Context, signup *model.Signup) (token *model.Token, err error)
+	Signin(ctx context.Context, signin *model.Signin) (token *model.Token, err error)
 }
