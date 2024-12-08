@@ -82,7 +82,7 @@ func Init(pikachu *config.ViperConfig) (*Repository, *RedisRepository, error) {
 	}
 
 	redisPrefix = pikachu.GetString("projectName")
-	redisConn, err := util.RedisConnect(pikachu, zlog)
+	redisConn, err := util.RedisConnect(pikachu.GetString("redis.host"), pikachu.GetInt("redis.port"), zlog)
 	if err != nil {
 		return nil, nil, err
 	}

@@ -4,17 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"pikachu/config"
-
 	"github.com/go-redis/redis/v8"
 )
 
 // RedisConnect ...
-func RedisConnect(pikachu *config.ViperConfig, zlog *Logger) (redisDB *redis.Client, err error) {
-	host := fmt.Sprintf("%s:%d", pikachu.GetString("redis.host"), pikachu.GetInt("redis.port"))
-	zlog.Infow("InitRedis", "redis_host", host)
+func RedisConnect(host string, port int, zlog *Logger) (redisDB *redis.Client, err error) {
+	addr := fmt.Sprintf("%s:%d", host, port)
+	zlog.Infow("InitRedis", "addr", addr)
 	redisDB = redis.NewClient(&redis.Options{
-		Addr:     host,
+		Addr:     addr,
 		Password: "",
 	})
 	if _, err := redisDB.Ping(context.Background()).Result(); err != nil {

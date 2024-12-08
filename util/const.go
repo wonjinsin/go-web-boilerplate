@@ -27,12 +27,18 @@ const (
 
 // TokenTypes ...
 const (
-	TokenTypeBaerer string = "Baerer"
+	TokenTypeBearer string = "Bearer"
 )
 
 // TokenAudiences ...
 const (
 	TokenAudienceAccount string = "account"
+)
+
+// ConfigKeys ...
+const (
+	ConfigPubTokenKey string = "pubTokenKey"
+	ConfigPrvTokenKey string = "prvTokenKey"
 )
 
 // GetTRID ...

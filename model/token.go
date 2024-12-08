@@ -40,7 +40,7 @@ func NewUserClaim(projectName string, domain string, user *User) *TokenClaim {
 			ExpiresAt: jwt.NewNumericDate(time.Now().AddDate(0, 0, 1)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
-		Type:            util.TokenTypeBaerer,
+		Type:            util.TokenTypeBearer,
 		AuthorizedParty: projectName,
 		Email:           user.Email,
 		Roles:           []string{"User"},

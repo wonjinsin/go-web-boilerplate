@@ -12,7 +12,7 @@ import (
 
 // SetSession ...
 func SetSession(pikachu *config.ViperConfig, zlog *util.Logger) (echo.MiddlewareFunc, error) {
-	redisConn, err := util.RedisConnect(pikachu, zlog)
+	redisConn, err := util.RedisConnect(pikachu.GetString("redis.host"), pikachu.GetInt("redis.port"), zlog)
 	if err != nil {
 		return nil, err
 	}

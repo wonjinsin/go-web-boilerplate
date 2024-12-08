@@ -5,6 +5,7 @@ import (
 	"pikachu/config"
 	"pikachu/model"
 	"pikachu/repository"
+	"pikachu/util"
 
 	"github.com/juju/errors"
 )
@@ -57,7 +58,7 @@ func (a *authUsecase) Signin(ctx context.Context, signin *model.Signin) (token *
 
 func (a *authUsecase) newToken(ctx context.Context, user *model.User) (*model.Token, error) {
 	tokenClaim := model.NewUserClaim(a.conf.GetString("projectName"), a.conf.GetString("domain"), user)
-	accessToken, err := tokenClaim.GenerateToken(a.conf.Get("prvTokenKey").([]byte))
+	accessToken, err := tokenClaim.GenerateToken(a.conf.Get(util.ConfigPrvTokenKey).([]byte))
 	if err != nil {
 		zlog.With(ctx).Errorw("GenerateToken failed", "user", user)
 		return nil, err

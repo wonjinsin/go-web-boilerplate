@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"pikachu/util"
 	"runtime"
 
 	"github.com/spf13/pflag"
@@ -63,14 +64,14 @@ func initViperConfig() *ViperConfig {
 		fmt.Printf("Error when reading prvTokenKey: %v\n", err)
 		os.Exit(1)
 	}
-	v.Set("prvTokenKey", prvTokenKey)
+	v.Set(util.ConfigPrvTokenKey, prvTokenKey)
 
 	pubTokenKey, err := os.ReadFile(filepath.Join(rootDir, "key", "token_key.pub"))
 	if err != nil {
 		fmt.Printf("Error when reading pubTokenKey: %v\n", err)
 		os.Exit(1)
 	}
-	v.Set("pubTokenKey", pubTokenKey)
+	v.Set(util.ConfigPubTokenKey, pubTokenKey)
 
 	return &ViperConfig{v}
 }

@@ -73,7 +73,7 @@ func getBearerToken(c echo.Context) (string, error) {
 	}
 
 	parts := strings.Split(authHeader, " ")
-	if len(parts) != 2 || parts[0] != "Bearer" {
+	if len(parts) != 2 || parts[0] != util.TokenTypeBearer {
 		return "", fmt.Errorf("token is required")
 	}
 
@@ -81,7 +81,7 @@ func getBearerToken(c echo.Context) (string, error) {
 }
 
 func getTokenKey(conf *config.ViperConfig) (*rsa.PublicKey, error) {
-	keyBytes, ok := conf.Get("pubTokenKey").([]byte)
+	keyBytes, ok := conf.Get(util.ConfigPubTokenKey).([]byte)
 	if !ok {
 		return nil, fmt.Errorf("cannot read token key")
 	}
