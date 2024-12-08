@@ -58,7 +58,6 @@ func NewLogger() (*Logger, error) {
 		return nil, errors.Annotate(err, "logger build failed")
 	}
 
-	defer logger.Sync()
 	zLog = &Logger{logger.Sugar()}
 
 	return zLog, nil

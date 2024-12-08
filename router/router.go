@@ -16,10 +16,6 @@ func Init(e *echo.Echo, svc *service.Service) {
 	makeV1UserRoute(ver, svc)
 }
 
-func makeV1Route(ver *echo.Group, svc *service.Service) {
-	makeV1UserRoute(ver, svc)
-}
-
 func makeV1AuthRoute(ver *echo.Group, svc *service.Service) {
 	user := ver.Group("/auth")
 	authCt := ct.NewAuthController(svc.Auth)

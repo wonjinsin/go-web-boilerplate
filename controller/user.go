@@ -36,7 +36,7 @@ func (u *User) GetUser(c echo.Context) (err error) {
 		return response(c, http.StatusBadRequest, "User is not valid")
 	}
 
-	user := &model.User{}
+	var user *model.User
 	if user, err = u.userSvc.GetUser(intCtx, uid); err != nil {
 		zlog.With(intCtx).Warnw("UserSvc GetUser failed", "uid", uid, "err", err)
 		return response(c, http.StatusInternalServerError, err.Error())
@@ -58,7 +58,7 @@ func (u *User) UpdateUser(c echo.Context) (err error) {
 		return response(c, http.StatusBadRequest, "User is not valid")
 	}
 
-	user := &model.User{}
+	var user *model.User
 	if err := c.Bind(user); err != nil {
 		zlog.With(intCtx).Warnw("Bind error", "uid", uid, "user", user, "err", err)
 		return response(c, http.StatusBadRequest, "Bind error")

@@ -13,8 +13,8 @@ type gormUserReadOnlyRepository struct {
 }
 
 // NewGormUserReadOnlyRepository ...
-func NewGormUserReadOnlyRepository(conn *gorm.DB) UserRepository {
-	return &gormUserRepository{conn: conn}
+func NewGormUserReadOnlyRepository(conn *gorm.DB) UserReadOnlyRepository {
+	return &gormUserReadOnlyRepository{conn: conn}
 }
 
 // GetUser ...

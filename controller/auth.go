@@ -51,7 +51,7 @@ func (a *Auth) Signin(c echo.Context) (err error) {
 	ctx := c.Request().Context()
 	zlog.With(ctx).Infow("[New request]")
 	intCtx, cancel := context.WithTimeout(ctx, util.CtxTimeOut)
-	ctx = context.WithValue(ctx, util.LoginKey, true)
+	intCtx = context.WithValue(intCtx, util.LoginKey, true)
 	defer cancel()
 
 	signin := &model.Signin{}

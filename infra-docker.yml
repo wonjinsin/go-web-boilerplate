@@ -1,0 +1,35 @@
+version: "3"
+services:
+  mysql:
+    container_name: pikachu_mysql
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: mysqlvotmdnjem
+      MYSQL_DATABASE: pikachu
+      MYSQL_USER: pikachu
+      MYSQL_PASSWORD: mysqlvotmdnjem
+    ports:
+      - 33306:3306
+
+  redis:
+    container_name: pikachu_redis
+    image: redis:latest
+    ports:
+      - "36379:6379"
+    healthcheck:
+      test: "redis-cli -h 127.0.0.1 ping"
+      interval: 3s
+      timeout: 1s
+      retries: 5
+
+  redis-commander:
+    container_name: pikachu_redis_commander
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=redis_store:redis:6379
+    ports:
+      - "38081:8081"
+
+networks:
+  default:
+    name: pikachu_network

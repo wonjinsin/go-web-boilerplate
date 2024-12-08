@@ -29,7 +29,9 @@ func (r *redisUserRepository) GetUser(ctx context.Context, uid string) (ruser *m
 	if err == redis.Nil {
 		zlog.With(ctx).Infow("GetUser Not Found", "uid", uid)
 		if ruser, err = r.userReadOnlyRepo.GetUser(ctx, uid); err == nil {
-			r.newUserToRedis(ctx, ruser)
+			if err = r.newUserToRedis(ctx, ruser); err != nil {
+				zlog.With(ctx).Errorw("GetUser Error", "uid", uid, "err", err)
+			}
 		}
 		return ruser, err
 	} else if err != nil {

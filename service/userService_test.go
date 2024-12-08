@@ -2,20 +2,18 @@ package service
 
 import (
 	"context"
-	"pikachu/config"
 	"pikachu/mock"
 	"pikachu/model"
 
 	"github.com/brianvoe/gofakeit/v6"
-	"github.com/golang/mock/gomock"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"go.uber.org/mock/gomock"
 )
 
 var _ = Describe("userService Test", func() {
 	var (
-		conf     *config.ViperConfig
 		mockCtrl *gomock.Controller
 		muRepo   *mock.MockUserRepository
 
@@ -27,7 +25,7 @@ var _ = Describe("userService Test", func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		muRepo = mock.NewMockUserRepository(mockCtrl)
 
-		userService = NewUserService(conf, muRepo)
+		userService = NewUserService(muRepo)
 		ctx = context.Background()
 	})
 

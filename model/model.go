@@ -9,8 +9,6 @@ import (
 	"gorm.io/plugin/soft_delete"
 )
 
-var zlog *util.Logger
-
 func init() {
 	_, err := util.NewLogger()
 	if err != nil {

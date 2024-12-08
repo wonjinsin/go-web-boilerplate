@@ -44,7 +44,9 @@ func GetTRID() string {
 	return trid
 }
 
-// ContestKey ...
+type contextKey string
+
+// ContextKey ...
 const (
-	LoginKey = "login"
+	LoginKey contextKey = "login"
 )

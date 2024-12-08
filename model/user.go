@@ -33,10 +33,7 @@ func NewUserBySignup(su *Signup) (user *User, err error) {
 
 // ValidateUpdateUser ...
 func (u *User) ValidateUpdateUser() bool {
-	if u.UID != "" {
-		return false
-	}
-	return true
+	return u.UID == ""
 }
 
 // UpdateUser ...

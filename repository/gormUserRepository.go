@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"pikachu/model"
-	"pikachu/util"
 
 	"github.com/juju/errors"
 	"gorm.io/gorm"
@@ -15,13 +14,6 @@ type gormUserRepository struct {
 
 // NewGormUserRepository ...
 func NewGormUserRepository(conn *gorm.DB) UserRepository {
-	migrations := []interface{}{
-		&model.User{},
-	}
-	if err := conn.Set("gorm:table_options", util.DBCharsetOption).Migrator().AutoMigrate(migrations...); err != nil {
-		zlog.Panicw("NewGormDealRepository Unable to AutoMigrate DealRepository", "err", err)
-	}
-
 	return &gormUserRepository{conn: conn}
 }
 

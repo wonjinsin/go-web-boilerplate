@@ -107,7 +107,7 @@ func Init(pikachu *config.ViperConfig) (*Repository, *RedisRepository, error) {
 }
 
 func mysqlConnect(pikachu *config.ViperConfig, prefix string) (mysql *gorm.DB, err error) {
-	return gorm.Open(getDialector(pikachu, prefix), &gorm.Config{})
+	return gorm.Open(getDialector(pikachu, prefix), getConfig())
 }
 
 func getDialector(pikachu *config.ViperConfig, prefix string) gorm.Dialector {
@@ -122,7 +122,7 @@ func getDialector(pikachu *config.ViperConfig, prefix string) gorm.Dialector {
 	return mysql.Open(dbURI)
 }
 
-func getConfig(pikachu *config.ViperConfig) (gConfig *gorm.Config) {
+func getConfig() (gConfig *gorm.Config) {
 	dbLogger := &dbLogger{zlog}
 	gConfig = &gorm.Config{
 		Logger:                                   dbLogger,
