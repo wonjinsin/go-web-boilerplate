@@ -4,7 +4,7 @@ import (
 	"pikachu/util"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
@@ -56,4 +56,9 @@ func (t *TokenClaim) GenerateToken(prvKey []byte) (string, error) {
 	}
 
 	return jwt.NewWithClaims(jwt.SigningMethodRS256, t).SignedString(key)
+}
+
+// GetUserUID ...
+func (t *TokenClaim) GetUserUID() string {
+	return t.Subject
 }

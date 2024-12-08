@@ -13,7 +13,7 @@ import (
 
 	"github.com/dimiro1/banner"
 	"github.com/labstack/echo/v4"
-	// "github.com/rbcervilla/redisstore/v8"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 var zlog *util.Logger
@@ -33,8 +33,10 @@ func init() {
 func main() {
 	pikachu := config.Pikachu
 	e := echo.New()
+	e.Use(middleware.CORS())
 	e.Use(mw.SetTRID())
 	e.Use(mw.RequestLogger(zlog))
+	e.Use(mw.AuthMiddleware(pikachu))
 	e.HideBanner = true
 
 	sessionMiddleWare, err := mw.SetSession(pikachu, zlog)

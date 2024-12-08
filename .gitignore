@@ -30,3 +30,4 @@ go.mod
 go.sum
 __debug_bin
 pkg.list
+__debug_bin*

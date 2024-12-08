@@ -49,4 +49,5 @@ type contextKey string
 // ContextKey ...
 const (
 	LoginKey contextKey = "login"
+	UUID     contextKey = "uuid"
 )
